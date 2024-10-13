@@ -1,0 +1,87 @@
+
+CREATE TABLE Startup (
+    MaStartup INT AUTO_INCREMENT PRIMARY KEY,
+    TenStartup VARCHAR(255),
+    GioiThieuStartup TEXT,
+    Logo VARCHAR(255),
+    ThanhTich TEXT,
+    PitchDeck VARCHAR(255),
+    Email VARCHAR(255),
+    TaiKhoan VARCHAR(255)
+);
+
+CREATE TABLE NhanVien (
+    MaNhanVien INT AUTO_INCREMENT PRIMARY KEY,
+    TenNhanVien VARCHAR(255),
+    Email VARCHAR(255),
+    TaiKhoan VARCHAR(255)
+);
+
+CREATE TABLE SuKien (
+    MaSuKien INT AUTO_INCREMENT PRIMARY KEY,
+    TenSuKien VARCHAR(255),
+    MoTa TEXT,
+    ThoiGian DATE,
+    DiaDiem VARCHAR(255)
+);
+
+CREATE TABLE MucTieu (
+    MaMucTieu INT AUTO_INCREMENT PRIMARY KEY,
+    TenMucTieu VARCHAR(255),
+    GiaTriMucTIeu DECIMAL(15, 2),
+    GiaTri DECIMAL(15, 2),
+    MaStartup INT
+);
+
+CREATE TABLE YeuCauHoTro (
+    MaYeuCauHoTro INT AUTO_INCREMENT PRIMARY KEY,
+    TieuDeHoTro VARCHAR(255),
+    NoiDungYeuCau TEXT,
+    NgayYeuCau DATE,
+    KetQua VARCHAR(255),
+    MaStartup INT,
+    MaTacVu INT
+);
+
+CREATE TABLE BienBan (
+    MaBienBan INT AUTO_INCREMENT PRIMARY KEY,
+    ThoiGian DATETIME,
+    NoiDung TEXT,
+    MaNhanVien INT,
+    MaStartup INT
+);
+
+CREATE TABLE TacVu (
+    MaTacVu INT AUTO_INCREMENT PRIMARY KEY,
+    TieuDeTacVu VARCHAR(255),
+    ChiTietTacVu TEXT,
+    NgayTao DATE,
+    ThoiHanTacVu DATE,
+    TrangThaiTacVu SET(‘Hoàn thành’,’Đang làm’,’Chưa làm’,’Hủy bỏ’),
+    NgayHoanThanh DATE,
+    MaBienBan INT,
+    MaLoaiTacVu VARCHAR(50),
+    MaNhanVien INT
+);
+
+CREATE TABLE LoaiTacVu (
+    MaLoaiTacVu VARCHAR(50) PRIMARY KEY,
+    TenLoaiTacVu VARCHAR(255)
+);
+
+CREATE TABLE DangKy ( 
+MaDangKy INT PRIMARY KEY AUTO_INCREMENT, 
+MaSuKien INT, 
+TinhTrangXacNhan SET(‘Xác nhận’,’Chưa xác nhận’,’Từ chối’), 
+Checkin BOOLEAN, 
+SoLuongThamGia INT,
+MaStartup INT ); 
+
+CREATE TABLE NhiemVuStartup (
+    MaNhiemVu INT AUTO_INCREMENT PRIMARY KEY,
+    TenNhiemVu VARCHAR(255),
+    MoTaNhiemVu VARCHAR(255),
+    MucDoHoanThanh INT,
+	MaBienBan INT
+);
+
