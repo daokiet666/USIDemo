@@ -162,9 +162,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $recContent = $_POST["description"];
     $recStartup= $_POST["startup"];
     $startuptask_titles = isset($_POST['startup_task_titles']) ? $_POST['startup_task_titles'] : [];
-    $startuptask_descriptions = isset($_POST['startup_task_description']) ? $_POST['startup_task_description'] : [];
+    $startuptask_descriptions = isset($_POST['startup_task_descriptions']) ? $_POST['startup_task_descriptions'] : [];
     $usitask_titles = isset($_POST['usi_task_titles']) ? $_POST['usi_task_titles'] : [];
-    $usitask_descriptions = isset($_POST['usi_task_description']) ? $_POST['usi_task_description'] : [];
+    $usitask_descriptions = isset($_POST['usi_task_descriptions']) ? $_POST['usi_task_descriptions'] : [];
+
     //chuyen dang datetime 
     $recDatetime = str_replace('T', ' ', $recDate) . ":00";
     $link = NULL;
@@ -179,7 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $insert_result = mysqli_stmt_execute($stmt);
     if ($insert_result) {
         $last_id = mysqli_insert_id($link);
-        echo "<script>alert('Yêu cầu thành công.');</script>";
+        echo "<script>alert('Tạo biên bản thành công.');</script>";
     } else {
         echo "<script>alert('Đã có lỗi xảy ra.');</script>";
     }
@@ -192,33 +193,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $startuptask_description = $startuptask_descriptions[$sindex];
         $startupsql = "INSERT INTO nhiemvustartup (TenNhiemVu, MoTaNhiemVu, MaBienBan) VALUES (?,?,?)";
         $stmt = mysqli_prepare($link, $startupsql);
-        mysqli_stmt_bind_param($stmt, "ssi", $startuptask_titles, $startuptask_description, $last_id);
+        mysqli_stmt_bind_param($stmt, "ssi", $startuptask_title, $startuptask_description, $last_id);
 
         //Thực thi câu lệnh
         $insert_result = mysqli_stmt_execute($stmt);
-        if ($insert_result) {
-            echo "<script>alert('Yêu cầu thành công.');</script>";
-        } else {
-            echo "<script>alert('Đã có lỗi xảy ra.');</script>";
-        }
     }
 
-
+    $tasktype = 'TT002';
+    $taskstatus = 'Chưa làm';
     //Insert nhhiệm vụ cho USI
     foreach ($usitask_titles as $uindex => $usitask_title ) {
-        $usi_description = $usi_descriptions[$uindex];
+        $usi_description = $usitask_descriptions[$uindex];
         $taskdate = substr($recDate, 0, 10);
-        $usisql = "INSERT INTO tacvu (TieuDeTacVu, ChiTietTacVu, NgayTao, MaBienBan, MaLoaiTacVu, MaNhanVien) VALUES (?,?,?,?,?,?)";
+        $usisql = "INSERT INTO tacvu (TieuDeTacVu, ChiTietTacVu, NgayTao, MaBienBan, MaLoaiTacVu, MaNhanVien, TrangThaiTacVu) VALUES (?,?,?,?,?,?)";
         $stmt = mysqli_prepare($link, $usisql);
-        mysqli_stmt_bind_param($stmt, "sssisi", $usitask_title, $usi_description,$taskdate, $last_id, 'TT002', $user);
+        mysqli_stmt_bind_param($stmt, "sssisis", $usitask_title, $usi_description,$taskdate, $last_id, $tasktype, $user, $taskstatus);
 
         //Thực thi câu lệnh
         $insert_result = mysqli_stmt_execute($stmt);
-        if ($insert_result) {
-            echo "<script>alert('Yêu cầu thành công.');</script>";
-        } else {
-            echo "<script>alert('Đã có lỗi xảy ra.');</script>";
-        }
     }
 }
 
@@ -301,16 +293,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         const titleCell = document.createElement("td");
         const titleInput = document.createElement("input");
         titleInput.type = "text";
-        titleInput.name = "${type}_titles[]";
+        titleInput.name = type +'_titles[]';
         titleInput.placeholder = "Enter task title";
         titleInput.required = true;
         titleCell.appendChild(titleInput);
-
         // Create description input
         const descriptionCell = document.createElement("td");
         const descriptionInput = document.createElement("input");
         descriptionInput.type = "text";
-        descriptionInput.name = "${type}_descriptions[]";
+        descriptionInput.name = type + '_descriptions[]';
         descriptionInput.placeholder = "Enter task description";
         descriptionInput.required = true;
         descriptionCell.appendChild(descriptionInput);
