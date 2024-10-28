@@ -119,7 +119,6 @@
 <?php
 require_once 'user.php';
 
-$demo_user = $_SESSION['MaStartup'];
 require_once '../db_module.php';
 
 // Kết nối đến cơ sở dữ liệu

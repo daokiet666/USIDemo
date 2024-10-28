@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Chuẩn bị câu lệnh SQL để thực thi với các tham số ?
     $stmt = mysqli_prepare($link, $sql);
     // Hàm liên kết các tham số với truy vấn SQL và cho cơ sở dữ liệu biết các tham số là gì
-    mysqli_stmt_bind_param($stmt, "ssss", $reqTitle, $reqContent, $reqDate, $_SESSION['MaStartup']);
+    mysqli_stmt_bind_param($stmt, "ssss", $reqTitle, $reqContent, $reqDate, $demo_user);
 
     //Thực thi câu lệnh
     $insert_result = mysqli_stmt_execute($stmt);

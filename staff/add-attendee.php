@@ -128,9 +128,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         giaiPhongBoNho($link, null);
 
         // Redirect or display a success message
-        echo "Thêm startup thành công";
+        echo "<script>alert('Thêm startup tham dự thành công.');
+            window.parent.location.reload();
+            window.parent.hidePopup();
+        </script>"; 
     } else {
-        echo "No startups were selected.";
+        echo "<script>alert('Thêm thành công.');</script>";
     }
 } else {
     // Handle the case where the form is not submitted properly

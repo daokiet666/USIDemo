@@ -119,19 +119,21 @@
 <?php
 require_once 'user.php';
 
-$demo_startup = 1;
+
 require_once '../db_module.php';
 
 // Kết nối đến cơ sở dữ liệu
 $link = null;
 taoKetNoi($link);
-
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $startupid = $_GET['startupid'];
+}
 
 // Truy vấn để lấy dữ liệu từ bảng cities với phân trang
 $query = "SELECT m.MaMucTieu, m.TenMucTieu, m.GiaTriMucTieu, m.GiaTri, m.MaStartup, s.TenStartup
 FROM muctieu m 
-LEFT JOIN startup s ON m.MaStartup = s.MaStartup
-WHERE m.MaStartup = $demo_startup";
+RIGHT JOIN startup s ON m.MaStartup = s.MaStartup
+WHERE s.MaStartup = $startupid";
 
 
 $result = chayTruyVanTraVeDL($link, $query);
@@ -185,7 +187,7 @@ if (isset($_POST['id']) && isset($_POST['value'])) {
             Danh sách mục tiêu của <?php echo $name?>
         </div>
         <div class='button'>
-            <button onclick='redirectToCreateRec(<?php echo $demo_startup; ?>)'>
+            <button onclick='redirectToCreateRec(<?php echo $startupid; ?>)'>
                 Tạo Mục tiêu mới
             </button>
         </div>

@@ -162,6 +162,35 @@ if (mysqli_num_rows($result) > 0) {
 
 // Giải phóng bộ nhớ sau khi sử dụng
 giaiPhongBoNho($link, $result);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $startupId = $_POST['startupId'] ?? null;
+    $action = $_POST['action'] ?? null;
+
+    if ($startupId && $action) {
+        taoKetNoi($link);
+        if ($action === 'confirm') {
+            $query = "UPDATE DangKy SET TinhTrangXacNhan = 'Xác nhận' WHERE MaStartup = ? AND MaSuKien = ?";
+        } elseif ($action === 'checkin') {
+            $query = "UPDATE DangKy SET Checkin = 1 WHERE MaStartup = ? AND MaSuKien = ?";
+        }
+        
+        if (isset($query)) {
+            $stmt = mysqli_prepare($link, $query);
+            mysqli_stmt_bind_param($stmt, "ii", $startupId, $eventid);
+            $success = mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
+            giaiPhongBoNho($link, null);
+        }
+        
+        echo json_encode(['success' => $success]);
+        exit; // End to prevent further page loading
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Invalid parameters']);
+        exit;
+    }
+}
+
+
 ?>
 
 <div class='request-mng-container'>
@@ -205,46 +234,65 @@ giaiPhongBoNho($link, $result);
         document.getElementById('php-frame').src = '';
     }
 
-    // JavaScript function to handle 'Tình trạng xác nhận' checkbox change
+    // Handle thay đổi trong cột xác nhận
     function confirmStatus(checkbox, startupId) {
         if (checkbox.checked) {
-            if (confirm("Are you sure to confirm this status?")) {
-                setTimeout(() => {
-                    // Simulate server response
-                    var response = { success: true };
-                    if (response.success) {
-                        checkbox.disabled = true;
-                        alert("Tình trạng xác nhận updated successfully!");
-                    } else {
-                        alert("Failed to update the status. Try again.");
-                        checkbox.checked = false;
-                    }
-                }, 500);
-            } else {
-                checkbox.checked = false;
-            }
+        if (confirm("Xác nhận")) {
+            fetch('attendee.php?id=<?php echo $eventid; ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'startupId': startupId,
+                    'action': 'confirm'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    checkbox.disabled = true;
+                    alert("Tình trạng xác nhận đã được cập nhật!");
+                } else {
+                    alert("Cập nhật thất bại");
+                    checkbox.checked = false;
+                }
+            });
+        } else {
+            checkbox.checked = false;
         }
     }
 
-    // JavaScript function to handle 'Checkin' checkbox change
+    }
+
+    // Handle thay đổi trong cột checkin
     function updateCheckinStatus(checkbox, startupId) {
         if (checkbox.checked) {
-            if (confirm("Xác nhận checkin startup?")) {
-                setTimeout(() => {
-                    // Simulate server response
-                    var response = { success: true };
-                    if (response.success) {
-                        checkbox.disabled = true;
-                        alert("Checkin startup thành công!");
-                    } else {
-                        alert("Checkin startup không thành công.");
-                        checkbox.checked = false;
-                    }
-                }, 500);
-            } else {
-                checkbox.checked = false;
-            }
+        if (confirm("Xác nhận checkin startup?")) {
+            fetch('attendee.php?id=<?php echo $eventid; ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'startupId': startupId,
+                    'action': 'checkin'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    checkbox.disabled = true;
+                    alert("Checkin startup thành công!");
+                } else {
+                    alert("Checkin startup không thành công.");
+                    checkbox.checked = false;
+                }
+            });
+        } else {
+            checkbox.checked = false;
         }
+    }
     }
 </script>
 
